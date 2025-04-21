@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora Científica</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #fefefe;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        
+         /*conteiner da calculadora*/
+        .calculator {
+            background-color: #3f3f3f;
+            border-radius: 18px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            width: 270px;
+            padding: 20px;
+        }
+        
+         /*conteiner de exibição*/
+        .display-container {
+            background-color: #7d7a7a;
+            border: 13px solid #7b7979;
+            border-radius: 5px;
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: right;
+        }
+        
+        .operation {
+            font-size: 16px;
+            color: #777777;
+            height: 20px;
+            overflow: hidden;
+        }
+        
+        .result {
+            font-size: 22px;
+            height: 30px;
+            overflow: hidden;
+            color: #fafafa; /* Vermelho para mensagens de erro */
+            
+        }
+        
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+        }
+        
+        button {
+            background-color: #6d6c6c;
+            color: #FFFFFF;
+            border: none;
+            border-radius: 5px;
+            padding: 15px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        button:hover {
+            background-color: #565555;
+        }
+        
+        button.operator {
+            background-color: #ac186ccf;
+        }
+        
+        button.operator:hover {
+            background-color: #841855f6;
+        }
+        
+
+         /*botão colorido*/
+        button.clear {
+            background-color: #f42198cf;
+        }
+        
+        button.clear:hover {
+            background-color: #be1e79cf;
+        }
+        
+         /*botão colorido*/
+        button.equals {
+            background-color: #ea2092cf;
+            grid-column: span 4
+            ;
+        }
+
+        button.equals:hover {
+            background-color: #ba1c75cf;
+        }
+        
+         /*mensagem desenvolvido*/
+        footer { 
+            margin-top: 20px;
+            text-align: center;
+            color: #faf6f6;
+            font-size: 12px;
+        }
+
+        .virg{
+            background-color: #363636;
+            font-weight: bold;
+
+        }
+
+        button.virg:hover {
+            background-color: #2e2d2dcf;
+        }
+
+
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <div class="display-container">
+            <div class="result" id="displayOperacao">0</div>
+        </div>
+        <div class="buttons">
+            <button class="clear" onclick="LimparDisplay()">C</button>
+            <button class="operator" onclick="ExibirOperacao('/')">/</button>
+            <button class="operator" onclick="ExibirOperacao('*')">×</button>
+            <button class="operator" onclick="ExibirOperacao('-')">-</button>
+            <button onclick="ExibirOperacao('7')">7</button>
+            <button onclick="ExibirOperacao('8')">8</button>
+            <button onclick="ExibirOperacao('9')">9</button>
+            <button class="operator" onclick="ExibirOperacao('+')">+</button>
+            <button onclick="ExibirOperacao('4')">4</button>
+            <button onclick="ExibirOperacao('5')">5</button>
+            <button onclick="ExibirOperacao('6')">6</button>
+            <button class="virg" onclick="ExibirOperacao('.')">.</button>
+            <button onclick="ExibirOperacao('1')">1</button>
+            <button onclick="ExibirOperacao('2')">2</button>
+            <button onclick="ExibirOperacao('3')">3</button>
+            <button onclick="ExibirOperacao('0')" >0</button>
+            <button class="equals" onclick="calcular()">=</button>
+           
+        </div>
+        <footer>
+            Desenvolvido por Tárcio Caetano, Léo Pinho, Léo Neves e Brisa Nzinga
+        </footer>
+    </div>
+
+    <script> 
+
+        // Função para exibir a operação no visor
+        document.addEventListener('keydown', function(event) {
+
+            const tecla = event.key; // Captura a tecla pressionada
+            if (!isNaN(tecla)) {
+
+                // Teclas numéricas (0-9)
+                ExibirOperacao(tecla);
+
+            } else if (['+', '-', '*', '/'].includes(tecla)) {
+                // Operadores
+                ExibirOperacao(tecla);
+            } else if (tecla === 'Enter') {
+                // Enter para calcular
+                calcular();
+            } else if (tecla === 'Backspace') {
+                // Apaga o último caractere
+                let atual = display.innerHTML;
+                if (atual.length > 1) {
+                    display.innerHTML = atual.slice(0, -1);
+                } else {
+                    display.innerHTML = '0';
+                }
+            } else if (tecla === 'c' || tecla === 'C') {
+                // Tecla "C" limpa o display
+                LimparDisplay();
+            } else if (tecla === '.' || tecla === ',') {
+                // Ponto ou vírgula para decimal
+                ExibirOperacao('.');
+            }
+        });
+
+
+
+        let display = document.getElementById('displayOperacao');
+
+        function ExibirOperacao(operacao) {
+
+                if (display.innerHTML === '0') {
+
+                    display.innerHTML = operacao; // Se o visor estiver zerado, substitui o valor por 'operacao'.
+
+                } else {
+
+                    switch (operacao) {
+
+                        case '+': case '-': case '*': case '/':
+                
+                            if (!/[+\-*/]$/.test(display.innerHTML)) { //  retorna true se o conteúdo atual do visor terminar com um desses símbolos.
+                                display.innerHTML += operacao;
+                            }
+
+                        break;
+
+                            case '.':
+                                if (!display.innerHTML.includes('.')) {
+                                    display.innerHTML += '.';
+                                }
+                            break;
+
+                                default:
+                                    display.innerHTML += operacao;
+                                break;
+
+                    }
+                }
+        }
+
+            function LimparDisplay() {
+                display.innerHTML = '0';
+            }
+
+            function calcular() {
+                
+                try {
+
+                    const expr = display.innerHTML; // Obtém a expressão atual do visor
+
+                    // testa se a expressão contem apenas números e operadores válidos 
+                    if(display.innerHTML.match(/[^0-9+\-*/.]/)){
+                        throw new SyntaxError(); // Lança um erro se a expressão contiver caracteres inválidos
+                        return;
+                    } 
+
+                    const fn = new Function(`return ${expr};`); // Cria uma função a partir da expressão e retorna o resultado
+                    const resultado = fn();
+
+                    if (resultado === Infinity) {
+                        throw new RangeError(); // Lança um erro se o resultado for infinito
+                        return;
+                    }
+                    display.innerHTML = resultado;
+
+                } catch (e) {
+
+                    if(e instanceof RangeError){
+                        display.innerHTML = 'Erro divisão por zero'; // Exibe mensagem de erro se o resultado for muito grande
+                    }
+                    else if(e instanceof SyntaxError){
+                        display.innerHTML = 'Entrada Inválida'; // Exibe mensagem de erro se a expressão for inválida
+                    }
+                
+                }
+            }
+
+    </script>
+</body>
+</html>
